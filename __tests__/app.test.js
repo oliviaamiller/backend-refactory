@@ -4,21 +4,19 @@ const request = require('supertest');
 const app = require('../lib/app');
 const Order = require('../lib/models/Order');
 
-// TODO: Remove this function & use the Order model
-async function createOrder({ product, quantity }) {
+// // TODO: Remove this function & use the Order model
+// async function createOrder({ product, quantity }) {
 
-  const order = await Order.insert({ product: 'test', quantity: 2 }); 
-  const response = await request(app).get(`/api/v1/orders/${order.id}`);
-
-  expect(response.body).toEqual(order);
+  
+ 
 
 
-  // const { rows } = await pool.query(
-  //   'INSERT INTO orders(product, quantity) VALUES ($1, $2) RETURNING *;',
-  //   [product, quantity]
-  // );
-  // return new Order(rows[0]);
-}
+//   // const { rows } = await pool.query(
+//   //   'INSERT INTO orders(product, quantity) VALUES ($1, $2) RETURNING *;',
+//   //   [product, quantity]
+//   // );
+//   // return new Order(rows[0]);
+// }
 
 // TODO: Remove this function & use the Order model
 async function getOrderById(id) {
@@ -42,26 +40,26 @@ describe('refactory routes', () => {
   });
 
   it('should be able to create an order', async () => {
-    const res = await request(app)
-      .post('/api/v1/orders')
-      .send({ product: 'Widget', quantity: 1 });
+    const order = await Order.insert({ product: 'test', quantity: 2 }); 
+    const response = await request(app).get(`/api/v1/orders/${order.id}`);
+    expect(response.body).toEqual(order);
 
-    expect(res.body).toEqual({
+    expect(response.body).toEqual({
       id: expect.any(String),
-      product: 'Widget',
-      quantity: 1,
+      product: 'test',
+      quantity: 2,
     });
   });
 
   it('should be able to list an order by id', async () => {
-    const order = await createOrder({ product: 'Widget', quantity: 1 });
+    const order = await Order.insert({ product: 'Widget', quantity: 1 });
     const res = await request(app).get(`/api/v1/orders/${order.id}`);
 
     expect(res.body).toEqual(order);
   });
 
   it('should be able to list orders', async () => {
-    await createOrder({ product: 'Widget', quantity: 1 });
+    await Order.insert({ product: 'Widget', quantity: 1 });
     const res = await request(app).get('/api/v1/orders');
 
     expect(res.body).toEqual([
@@ -74,7 +72,7 @@ describe('refactory routes', () => {
   });
 
   it('should be able to update an order', async () => {
-    const order = await createOrder({ product: 'Widget', quantity: 1 });
+    const order = await Order.insert({ product: 'Widget', quantity: 1 });
     const res = await request(app)
       .patch(`/api/v1/orders/${order.id}`)
       .send({ product: 'Thingamajig', quantity: 2 });
@@ -90,7 +88,7 @@ describe('refactory routes', () => {
   });
 
   it('should be able to delete an order', async () => {
-    const order = await createOrder({ product: 'Widget', quantity: 1 });
+    const order = await Order.insert({ product: 'Widget', quantity: 1 });
     const res = await request(app).delete(`/api/v1/orders/${order.id}`);
 
     expect(res.body).toEqual(order);

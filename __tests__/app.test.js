@@ -6,11 +6,18 @@ const Order = require('../lib/models/Order');
 
 // TODO: Remove this function & use the Order model
 async function createOrder({ product, quantity }) {
-  const { rows } = await pool.query(
-    'INSERT INTO orders(product, quantity) VALUES ($1, $2) RETURNING *;',
-    [product, quantity]
-  );
-  return new Order(rows[0]);
+
+  const order = await Order.insert({ product: 'test', quantity: 2 }); 
+  const response = await request(app).get(`/api/v1/orders/${order.id}`);
+
+  expect(response.body).toEqual(order);
+
+
+  // const { rows } = await pool.query(
+  //   'INSERT INTO orders(product, quantity) VALUES ($1, $2) RETURNING *;',
+  //   [product, quantity]
+  // );
+  // return new Order(rows[0]);
 }
 
 // TODO: Remove this function & use the Order model
